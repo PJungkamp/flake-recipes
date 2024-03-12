@@ -20,7 +20,6 @@
     self,
     flake-parts,
     flake-discover,
-    nixpkgs,
     nixpkgs-lib,
     ...
   }:
@@ -43,19 +42,6 @@
       };
     in {
       systems = ["x86_64-linux"];
-
-      imports = [
-        flake-discover.flakeModules.base
-        flakeModules.default
-        flakeModules.discover
-      ];
-
-      discover = {
-        root = ./.;
-        recipes.enable = true;
-      };
-
-      perSystem.recipes.packages.enable = true;
 
       flake = {
         inherit flakeModules lib;
