@@ -8,18 +8,11 @@
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs-lib";
     };
-
-    flake-discover = {
-      url = "github:PJungkamp/flake-discover";
-      inputs.flake-parts.follows = "flake-parts";
-      inputs.nixpkgs-lib.follows = "nixpkgs-lib";
-    };
   };
 
   outputs = inputs @ {
     self,
     flake-parts,
-    flake-discover,
     nixpkgs-lib,
     ...
   }:
@@ -32,14 +25,7 @@
         inherit (nixpkgs-lib) lib;
       };
 
-      flakeModules = {
-        default = import ./flake-module.nix;
-
-        discover = flake-discover.lib.mkDiscoverModule {
-          name = "recipes";
-          path = ["flake"];
-        };
-      };
+      flakeModules.default = import ./flake-module.nix;
     in {
       systems = ["x86_64-linux"];
 
