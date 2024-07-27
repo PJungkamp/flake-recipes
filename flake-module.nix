@@ -7,7 +7,7 @@ toplevel @ {
   inherit (lib) mkOption mkEnableOption types mkIf mapAttrs;
   inherit (flake-parts-lib) mkSubmoduleOptions mkPerSystemOption;
 
-  perSystem = mkPerSystemOption ({
+  perSystemOptions = mkPerSystemOption ({
     config,
     pkgs,
     ...
@@ -29,12 +29,13 @@ toplevel @ {
 
     config.packages = let
       cfg = config.recipes.packages;
-    in
-      mkIf cfg.enable (
+      callPackage = lib.customisation.callPackageWith (cfg.pkgs // packages);
+      packages =
         mapAttrs
-        (name: recipe: cfg.pkgs.callPackage recipe cfg.args)
-        toplevel.config.flake.recipes
-      );
+        (name: recipe: callPackage recipe cfg.args)
+        toplevel.config.flake.recipes;
+    in
+      mkIf cfg.enable packages;
   });
 in {
   options = {
@@ -59,7 +60,7 @@ in {
       };
     };
 
-    perSystem = perSystem;
+    perSystem = perSystemOptions;
   };
 
   config.flake.overlays = let
